@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shopping_list/models/categories.dart';
 import 'package:shopping_list/models/grocery_items.dart';
+// import 'package:shopping_list/models/categories.dart';
+// import 'package:shopping_list/models/grocery_items.dart';
 // import 'package:shopping_list/models/grocery_items.dart';
 import 'package:shopping_list/widgets/grocery_item.dart';
 import 'package:shopping_list/Data/dummy_items.dart';
@@ -19,20 +20,18 @@ class _ShoppingListState extends State<ShoppingList> {
       appBar: AppBar(
         title: const Text("Your Groceries"),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              for (final item in groceryItems)
-                GroceryItemWidget(
-                  id: item.id,
-                  name: item.name,
-                  quantity: item.quantity,
-                  category: item.category,
-                ),
-            ],
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: ListView.builder(
+          itemCount: groceryItems.length,
+          itemBuilder: (context, index) {
+            return GroceryItemWidget(
+              id: groceryItems[index].id,
+              name: groceryItems[index].name,
+              quantity: groceryItems[index].quantity,
+              category: groceryItems[index].category,
+            );
+          },
         ),
       ),
     );

@@ -26,7 +26,7 @@ class GroceryItemWidget extends StatelessWidget {
                       color: category.color,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    width: 48,
+                    width: 16,
                     height: 48,
                   ),
                   const SizedBox(width: 24),
