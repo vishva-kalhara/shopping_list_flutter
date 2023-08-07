@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shopping_list/Data/categories.dart';
+import 'dart:convert';
+
 import 'package:shopping_list/models/grocery_items.dart';
-// import 'package:shopping_list/models/grocery_items.dart';
-// import 'package:shopping_list/models/categories.dart';
-// import 'package:shopping_list/models/grocery_items.dart';
-// import 'package:shopping_list/models/grocery_items.dart';
 import 'package:shopping_list/widgets/grocery_item.dart';
-// import 'package:shopping_list/Data/dummy_items.dart';
 import 'package:shopping_list/screens/new_item.dart';
 
 class ShoppingList extends StatefulWidget {
@@ -16,17 +15,45 @@ class ShoppingList extends StatefulWidget {
 }
 
 class _ShoppingListState extends State<ShoppingList> {
-  final List<GroceryItem> _groceryItem = [];
+  List<GroceryItem> _groceryItem = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadItems();
+  }
 
   void routeToAddItem() async {
-    final result = await Navigator.of(context).push<GroceryItem>(
+    await Navigator.of(context).push<GroceryItem>(
       MaterialPageRoute(builder: (ctx) => const AddItenScreen()),
     );
-    if (result == null) return;
+    _loadItems();
+  }
+
+  void _loadItems() async {
+    final url = Uri.https("flutter-prep-ea807-default-rtdb.firebaseio.com", "shopping-list.json");
+    final response = await http.get(url);
+    final Map<String, dynamic> listData = await jsonDecode(response.body);
+    final List<GroceryItem> _loadedItems = [];
+    for (final item in listData.entries) {
+      final cateegory = categories.entries
+          .firstWhere(
+            (element) => element.value.title == item.value['category'],
+          )
+          .value;
+      _loadedItems.add(
+        GroceryItem(
+          id: item.key,
+          name: item.value["name"],
+          quantity: item.value["quantity"],
+          category: cateegory,
+        ),
+      );
+    }
     setState(() {
-      _groceryItem.add(result);
+      _groceryItem = _loadedItems;
     });
-    // print(result);
+    // print(response.body);
   }
 
   @override
@@ -35,7 +62,7 @@ class _ShoppingListState extends State<ShoppingList> {
       itemCount: _groceryItem.length,
       itemBuilder: (context, index) {
         return Dismissible(
-          key: ValueKey(_groceryItem[index]),
+          key: ValueKey(_groceryItem[index].id),
           child: GroceryItemWidget(
             id: _groceryItem[index].id,
             name: _groceryItem[index].name,

@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:shopping_list/Data/categories.dart';
 import 'package:shopping_list/models/categories.dart';
 import 'package:shopping_list/models/grocery_items.dart';
@@ -24,17 +28,39 @@ class _AddItenScreenState extends State<AddItenScreen> {
   var qtyVal = 1;
   var selectedCategory = categories[Categories.carbs];
 
-  void _saveItem() {
+  void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      Navigator.of(context).pop(
-        GroceryItem(
-          id: DateTime.now().toString(),
-          name: nameVal,
-          quantity: qtyVal,
-          category: selectedCategory!,
+
+      final url = Uri.https("flutter-prep-ea807-default-rtdb.firebaseio.com", "shopping-list.json");
+      final response = await http.post(
+        url,
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: json.encode(
+          {
+            'name': nameVal,
+            'quantity': qtyVal,
+            'category': selectedCategory!.title,
+          },
         ),
       );
+      print(response.body);
+      print(response.statusCode);
+
+      if (!context.mounted) {
+        return;
+      }
+
+      Navigator.of(context).pop();
+      //   GroceryItem(
+      //     id: DateTime.now().toString(),
+      //     name: nameVal,
+      //     quantity: qtyVal,
+      //     category: selectedCategory!,
+      //   ),
+      // );
     }
   }
 
