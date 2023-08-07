@@ -34,11 +34,19 @@ class _ShoppingListState extends State<ShoppingList> {
     Widget content = ListView.builder(
       itemCount: _groceryItem.length,
       itemBuilder: (context, index) {
-        return GroceryItemWidget(
-          id: _groceryItem[index].id,
-          name: _groceryItem[index].name,
-          quantity: _groceryItem[index].quantity,
-          category: _groceryItem[index].category,
+        return Dismissible(
+          key: ValueKey(_groceryItem[index]),
+          child: GroceryItemWidget(
+            id: _groceryItem[index].id,
+            name: _groceryItem[index].name,
+            quantity: _groceryItem[index].quantity,
+            category: _groceryItem[index].category,
+          ),
+          onDismissed: (item) {
+            setState(() {
+              _groceryItem.remove(_groceryItem[index]);
+            });
+          },
         );
       },
     );
