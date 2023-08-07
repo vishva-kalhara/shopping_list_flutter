@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shopping_list/Data/categories.dart';
-// import 'package:shopping_list/Data/dummy_items.dart';
-// import 'package:shopping_list/data/categories.dart';
 import 'package:shopping_list/models/categories.dart';
 import 'package:shopping_list/models/grocery_items.dart';
+// import 'package:shopping_list/Data/dummy_items.dart';
+// import 'package:shopping_list/data/categories.dart';
+// import 'package:shopping_list/models/categories.dart';
+// import 'package:shopping_list/models/grocery_items.dart';
 
 class AddItenScreen extends StatefulWidget {
   const AddItenScreen({
@@ -17,26 +19,25 @@ class AddItenScreen extends StatefulWidget {
 }
 
 class _AddItenScreenState extends State<AddItenScreen> {
-  final _nameController = TextEditingController();
-  final _qtyController = TextEditingController();
-  var _selectedCategory = Categories.vegetables;
+  final _formKey = GlobalKey<FormState>();
+  var nameVal = '';
+  var qtyVal = 1;
+  var selectedCategory = categories[Categories.carbs];
 
-  void _passDataToMain() {
-    Navigator.of(context).pop();
-    // final result = {
-    //   "id",
-    //   _nameController.text,
-    //   _qtyController.text,
-    //   _selectedCategory,
-    // };
-    // widget.onSendData(result);
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _qtyController.dispose();
-    super.dispose();
+  void _saveItem() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      Navigator.of(context).pop(
+        
+          GroceryItem(
+            id: DateTime.now().toString(),
+            name: nameVal,
+            quantity: qtyVal,
+            category: selectedCategory!,
+          ),
+        
+      );
+    }
   }
 
   @override
@@ -48,6 +49,7 @@ class _AddItenScreenState extends State<AddItenScreen> {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Form(
+          key: _formKey,
           child: Column(
             children: [
               TextFormField(
@@ -63,6 +65,9 @@ class _AddItenScreenState extends State<AddItenScreen> {
                   }
                   return null;
                 },
+                onSaved: (value) {
+                  nameVal = value!;
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -74,56 +79,69 @@ class _AddItenScreenState extends State<AddItenScreen> {
                       decoration: const InputDecoration(
                         label: Text("Quantity"),
                       ),
-                      initialValue: 1.toString(),
+                      initialValue: qtyVal.toString(),
                       validator: (value) {
                         if (value == null || value.isEmpty || int.tryParse(value) == null || int.tryParse(value)! <= 0) {
                           return "Must be a valid, positive number";
                         }
                         return null;
                       },
+                      onSaved: (value) {
+                        qtyVal = int.parse(value!);
+                      },
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: DropdownButtonFormField(
-                        // value: _selectedCategory,
-                        items: [
-                          for (final category in categories.entries)
-                            DropdownMenuItem(
-                              value: category.value,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 16,
-                                    height: 16,
-                                    decoration: BoxDecoration(color: category.value.color),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(category.value.title),
-                                ],
-                              ),
+                      value: selectedCategory,
+                      items: [
+                        for (final category in categories.entries)
+                          DropdownMenuItem(
+                            value: category.value,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 16,
+                                  height: 16,
+                                  decoration: BoxDecoration(color: category.value.color),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(category.value.title),
+                              ],
                             ),
-                        ],
-                        onChanged: ((value) {
-                          if (value == null) {
-                            return;
-                          } else {
-                            setState(() {
-                              // print(_nameController);
-                              // _selectedCategory = value;
-                              // print(_selectedCategory);
-                            });
-                          }
-                        })),
+                          ),
+                      ],
+                      onChanged: ((value) {
+                        if (value == null) {
+                          return;
+                        } else {
+                          setState(() {
+                            // print(_nameController);
+                            selectedCategory = value;
+                            // print(_selectedCategory);
+                          });
+                        }
+                      }),
+                      // onSaved: (value){
+                      //   _s
+                      // },
+                    ),
                   )
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  TextButton(
+                    onPressed: () {
+                      _formKey.currentState!.reset();
+                    },
+                    child: const Text("Clear"),
+                  ),
                   ElevatedButton(
-                    onPressed: _passDataToMain,
+                    onPressed: _saveItem,
                     child: const Text("Add Item"),
                   )
                 ],

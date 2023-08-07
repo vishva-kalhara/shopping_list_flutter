@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopping_list/models/grocery_items.dart';
 // import 'package:shopping_list/models/grocery_items.dart';
 // import 'package:shopping_list/models/categories.dart';
 // import 'package:shopping_list/models/grocery_items.dart';
@@ -15,11 +16,17 @@ class ShoppingList extends StatefulWidget {
 }
 
 class _ShoppingListState extends State<ShoppingList> {
+  final List<GroceryItem> _groceryItem = [];
+
   void routeToAddItem() async {
-    final result = await Navigator.of(context).push(
+    final result = await Navigator.of(context).push<GroceryItem>(
       MaterialPageRoute(builder: (ctx) => const AddItenScreen()),
     );
-    print(result);
+    if (result == null) return;
+    setState(() {
+      _groceryItem.add(result);
+    });
+    // print(result);
   }
 
   @override
@@ -32,13 +39,13 @@ class _ShoppingListState extends State<ShoppingList> {
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: ListView.builder(
-          itemCount: groceryItems.length,
+          itemCount: _groceryItem.length,
           itemBuilder: (context, index) {
             return GroceryItemWidget(
-              id: groceryItems[index].id,
-              name: groceryItems[index].name,
-              quantity: groceryItems[index].quantity,
-              category: groceryItems[index].category,
+              id: _groceryItem[index].id,
+              name: _groceryItem[index].name,
+              quantity: _groceryItem[index].quantity,
+              category: _groceryItem[index].category,
             );
           },
         ),
