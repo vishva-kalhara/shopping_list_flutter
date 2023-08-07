@@ -28,14 +28,12 @@ class _AddItenScreenState extends State<AddItenScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       Navigator.of(context).pop(
-        
-          GroceryItem(
-            id: DateTime.now().toString(),
-            name: nameVal,
-            quantity: qtyVal,
-            category: selectedCategory!,
-          ),
-        
+        GroceryItem(
+          id: DateTime.now().toString(),
+          name: nameVal,
+          quantity: qtyVal,
+          category: selectedCategory!,
+        ),
       );
     }
   }
