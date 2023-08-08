@@ -92,7 +92,16 @@ class _ShoppingListState extends State<ShoppingList> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Your Groceries"),
-        actions: [IconButton(onPressed: routeToAddItem, icon: const Icon(Icons.add))],
+        actions: [
+          IconButton(
+            onPressed: _loadItems,
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+          IconButton(
+            onPressed: routeToAddItem,
+            icon: const Icon(Icons.add),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),

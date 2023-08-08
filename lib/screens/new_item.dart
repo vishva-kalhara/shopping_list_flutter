@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:shopping_list/Data/categories.dart';
 import 'package:shopping_list/models/categories.dart';
-import 'package:shopping_list/models/grocery_items.dart';
+// import 'package:shopping_list/models/grocery_items.dart';
 // import 'package:shopping_list/Data/dummy_items.dart';
 // import 'package:shopping_list/data/categories.dart';
 // import 'package:shopping_list/models/categories.dart';
